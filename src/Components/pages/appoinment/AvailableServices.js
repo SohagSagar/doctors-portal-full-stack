@@ -1,21 +1,24 @@
 import { format, set } from 'date-fns';
 import React, { useEffect, useState } from 'react';
 import Service from './Service';
+import AppoinmentModal from './AppoinmentModal';
 
-const AvailableServices = ({date}) => {
+const AvailableServices = ({ date }) => {
     const [services, setServices] = useState([]);
-    useEffect(()=>{
+    const [treatment, setTreatment] = useState(null);
+
+    useEffect(() => {
         fetch('/services.json')
-        .then(res => res.json())
-        .then(data => setServices(data));
-    },[])
-    if(services.length<1){
+            .then(res => res.json())
+            .then(data => setServices(data));
+    }, [])
+    if (services.length < 1) {
         return;
     }
     return (
         <section>
             <div className='text-center text-[22px]'>
-                <h1 className='text-secondary '>Available Services on {format(date,'PP')}</h1>
+                <h1 className='text-secondary '>Available Services on {date}</h1>
                 <p className='text-[#939393]'>Please select a service </p>
             </div>
 
@@ -24,12 +27,13 @@ const AvailableServices = ({date}) => {
                     services.map(service => <Service
                         key={service?._id}
                         service={service}
+                        setTreatment={setTreatment}
                     >
                     </Service>)
                 }
             </div>
 
-
+            {treatment && <AppoinmentModal setTreatment={setTreatment} slots={services.slots} date={date} treatment={treatment}></AppoinmentModal>}
         </section>
     );
 };
