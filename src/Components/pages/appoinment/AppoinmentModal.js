@@ -2,7 +2,7 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import Button from '../../shared_pages/Button';
 import { MdOutlineError } from 'react-icons/md';
-import { format } from 'date-fns';
+
 
 const AppoinmentModal = ({ date, treatment, setTreatment }) => {
     const { slots } = treatment;
@@ -12,13 +12,9 @@ const AppoinmentModal = ({ date, treatment, setTreatment }) => {
         
         // console.log(data);
         const bookingInfo = {
-            ...data,
-           
+            ...data, 
             treatmentName: treatment?.name,
-            appoinmentDate: date,
-            // slot:slot.value
-            
-            
+
         }
 
         console.log(bookingInfo);
@@ -65,9 +61,9 @@ const AppoinmentModal = ({ date, treatment, setTreatment }) => {
                             {/* Appoinment_date */}
                             <div className="form-control w-full max-w-xs text-center mx-auto">
                                 <label className="label pb-1 pl-0">
-                                    <span className="label-text ">Appoinment Date</span>
+                                    <span className="label-text ">Appoinment Date (read only)</span>
                                 </label>
-                                <input {...register('appoinmentDate')} disabled type="text" placeholder="Type here" className="input input-bordered input-sm w-full max-w-xs " defaultValue={date} />
+                                <input {...register('appoinmentDate')} type="text" readOnly placeholder="Type here" className="input input-bordered input-sm w-full max-w-xs " defaultValue={date} />
                             </div>
 
                             {/* treatment_time_slot */}
@@ -120,10 +116,7 @@ const AppoinmentModal = ({ date, treatment, setTreatment }) => {
                                 </label>
                             </div>
 
-                            <Button>Submit</Button>
-
-
-
+                            <Button>BOOK NOW</Button>
 
                         </form>
 

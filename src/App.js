@@ -4,6 +4,7 @@ import Home from "./Components/pages/Home/Home";
 import NavBar from "./Components/shared_pages/NavBar";
 import 'react-day-picker/dist/style.css';
 import Login from "./Components/pages/Login/Login";
+import Signup from "./Components/pages/Login/Signup";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Route path="/" element={<Home/>}></Route>
         <Route path="/apointment" element={<Appionment/>}></Route>
         <Route path="/login" element={<Login/>}></Route>
+        <Route path="/signup" element={<Signup/>}></Route>
       </Routes>
       
     </div>

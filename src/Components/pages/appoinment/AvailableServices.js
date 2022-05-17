@@ -34,6 +34,7 @@ const AvailableServices = ({ date }) => {
             </div>
 
             {treatment && <AppoinmentModal setTreatment={setTreatment} slots={services.slots} date={date} treatment={treatment}></AppoinmentModal>}
+            
         </section>
     );
 };
