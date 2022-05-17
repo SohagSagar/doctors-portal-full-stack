@@ -9,11 +9,11 @@ const Contact = () => {
             <h2 className='text-center text-[36px] text-white'>Stay connected with us</h2>
 
             <form className='text-center mt-5 flex grid-rows-1 items-center justify-center flex-col gap-2'>
-                <input type="text" placeholder="Email Address" class="input w-full max-w-xs input-secondary h-[48px]" />
+                <input type="text" placeholder="Email Address" className="input w-full max-w-xs input-secondary h-[48px]" />
 
-                <input type="text" placeholder="Subject" class="input w-full max-w-xs input-secondary h-[48px]" />
+                <input type="text" placeholder="Subject" className="input w-full max-w-xs input-secondary h-[48px]" />
 
-                <textarea class="w-full textarea textarea-secondary  max-w-xs" placeholder="Messages..."></textarea>
+                <textarea className="w-full textarea textarea-secondary  max-w-xs" placeholder="Messages..."></textarea>
                 <Button>Submit</Button>
             </form>
         </section>
