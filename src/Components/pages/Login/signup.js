@@ -1,20 +1,76 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import LoginButton from '../../shared_pages/LoginButton';
 import { MdOutlineError } from 'react-icons/md';
 import { useForm } from 'react-hook-form';
+import auth from '../../firebase/firebase.init';
+import { useCreateUserWithEmailAndPassword, useUpdateProfile } from 'react-firebase-hooks/auth';
+import { async } from '@firebase/util';
+import Loadding from '../../shared_pages/Loadding';
+import { toast } from 'react-toastify';
 
 
 
 const Signup = () => {
     const { register, handleSubmit, watch, formState: { errors } } = useForm();
-    const onSubmit = data => console.log(data);
+    const [errorMessage, setErrorMessage] = useState('')
+
+    //update user info in firebase
+    const [updateProfile, updating, updateError] = useUpdateProfile(auth);
+
+    // create user using emmail and password in firebase 
+    const [
+        createUserWithEmailAndPassword,
+        user,
+        loading,
+        error,
+    ] = useCreateUserWithEmailAndPassword(auth);
+
+    //getting form data//
+    const onSubmit = async (data) => {
+        console.log(data.email);
+        await createUserWithEmailAndPassword(data?.email, data?.password);
+        await updateProfile({ displayName: data?.name })
+    }
+
+    //handle errors while creating an new user
+    useEffect(() => {
+        if (error || updateError) {
+            const message = error.code.split('/')[1] || updateError.code.split('/')[1];
+            setErrorMessage(message);
+        }
+    }, [error, updateError]);
+
+    console.log(user);
+    useEffect(() => {
+        if (user) {
+            toast.success("User Created Successfully !", {
+                position: toast.POSITION.TOP_RIGHT
+            });
+        }
+    }, [user]);
+
+    if (updating || loading) {
+        return <Loadding />
+    }
 
     return (
         <div>
             <div className="card w-96 bg-base-100 shadow-xl mx-auto mt-12">
                 <div className="card-body">
                     <h2 className="text-center text-xl">Login</h2>
+
+                    {/* errors alert message */}
+
+                    {
+                        errorMessage &&
+                        <div class="alert shadow-lg h-10 text-center ">
+                            <div className='flex justify-center mx-auto'>
+                                <small className='text-red-500 text-center uppercase'>{errorMessage}</small>
+                            </div>
+                        </div>
+                    }
+
 
                     <form onSubmit={handleSubmit(onSubmit)} className='mt-4 '>
 
@@ -31,11 +87,11 @@ const Signup = () => {
                             })} type="text" placeholder="Type here" className="input input-bordered input-sm w-full max-w-xs" />
                             {
                                 errors.name?.type === 'required' &&
-                                <span className="label-text-alt text-red-500 text-left"><MdOutlineError className='inline' />{errors?.name?.message}</span>
+                                <span className="label-text-alt text-red-500 text-left mt-1 "><MdOutlineError className='inline' />{errors?.name?.message}</span>
                             }
                             {
                                 errors.name?.type === 'pattern' &&
-                                <span className="label-text-alt text-red-500 text-left"><MdOutlineError className='inline' />{errors?.name?.message}</span>
+                                <span className="label-text-alt text-red-500 text-left mt-1 "><MdOutlineError className='inline' />{errors?.name?.message}</span>
                             }
                         </div>
 
@@ -56,11 +112,11 @@ const Signup = () => {
                             })} type="email" placeholder="Type here" className="input input-bordered input-sm w-full max-w-xs" />
                             {
                                 errors.email?.type === 'required' &&
-                                <span className="label-text-alt text-red-500 text-left"><MdOutlineError className='inline' />{errors?.email?.message}</span>
+                                <span className="label-text-alt text-red-500 text-left mt-1"><MdOutlineError className='inline' />{errors?.email?.message}</span>
                             }
                             {
                                 errors.email?.type === 'pattern' &&
-                                <span className="label-text-alt text-red-500 text-left"><MdOutlineError className='inline' />{errors?.email?.message}</span>
+                                <span className="label-text-alt text-red-500 text-left mt-1"><MdOutlineError className='inline' />{errors?.email?.message}</span>
                             }
                         </div>
 
@@ -82,11 +138,11 @@ const Signup = () => {
                                 autoComplete='off' type="password" placeholder="Type here" className="input input-bordered input-sm w-full max-w-xs" />
                             {
                                 errors.password?.type === 'required' &&
-                                <span className="label-text-alt text-red-500 text-left"><MdOutlineError className='inline' />{errors?.password?.message}</span>
+                                <span className="label-text-alt text-red-500 text-left mt-1"><MdOutlineError className='inline' />{errors?.password?.message}</span>
                             }
                             {
                                 errors.password?.type === 'minLength' &&
-                                <span className="label-text-alt text-red-500 text-left"><MdOutlineError className='inline' />{errors?.password?.message}</span>
+                                <span className="label-text-alt text-red-500 text-left mt-1"><MdOutlineError className='inline' />{errors?.password?.message}</span>
                             }
 
 
@@ -96,12 +152,12 @@ const Signup = () => {
                     </form>
 
                     <p className='text-center'><small>Aready have an account? <Link className='text-secondary' to={'/login'}>Login Now</Link></small></p>
- 
+
 
                 </div>
             </div>
 
-            
+
         </div>
     );
 };

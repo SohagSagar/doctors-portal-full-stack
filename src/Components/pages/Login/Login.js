@@ -1,22 +1,89 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import LoginButton from '../../shared_pages/LoginButton';
 import { useForm } from "react-hook-form";
 import { MdOutlineError } from 'react-icons/md';
 import PasswordResetModal from './PasswordResetModal';
+import auth from '../../firebase/firebase.init';
+import { useSignInWithEmailAndPassword, useSignInWithGoogle } from 'react-firebase-hooks/auth';
+import { toast } from 'react-toastify';
+import Loadding from '../../shared_pages/Loadding';
 
 const Login = () => {
-    const [resetModalStatus,setResetModalStatus]=useState(true)
-    const { register, handleSubmit, watch, formState: { errors } } = useForm();
-    const onSubmit = data => console.log(data);
-    const resetPasswordModalStatus =()=>{
+    const [resetModalStatus, setResetModalStatus] = useState(true)
+    const { register,reset, handleSubmit, watch, formState: { errors } } = useForm();
+    const [errorMessage, setErrorMessage] = useState('');
+
+
+    const resetPasswordModalStatus = () => {
         setResetModalStatus(true);
     }
+
+    //signIn with email and password
+
+    const [
+        signInWithEmailAndPassword,
+        user,
+        loading,
+        error,
+    ] = useSignInWithEmailAndPassword(auth);
+
+    //getting form data
+    const onSubmit = data =>{
+        signInWithEmailAndPassword(data?.email, data?.password);
+        reset();
+    } 
+    // signin with google //
+    const [signInWithGoogle, googleUser, googleLoading, googleError] = useSignInWithGoogle(auth);
+
+    console.log(error);
+
+    useEffect(() => {
+        if (googleUser || user) {
+            toast.success("Login Successful !", {
+                position: toast.POSITION.TOP_RIGHT
+            });
+            setErrorMessage('')
+        }
+        
+    }, [googleUser,user]);
+
+    //handle all errors//
+    useEffect(()=>{
+        if(error || googleError){
+            const message = googleError?.code.split('/')[1] || error?.code.split('/')[1];
+            setErrorMessage(message)
+        }else{
+            setErrorMessage('')
+        }
+    },[error,googleError])
+
+
+    if (googleLoading || loading) {
+        return <Loadding />
+    }
+
+
+
+
     return (
         <div>
             <div className="card w-96 bg-base-100 shadow-xl mx-auto mt-12">
                 <div className="card-body">
                     <h2 className="text-center text-xl">Login</h2>
+
+                    {/* errors alert message */}
+
+                    {
+                        errorMessage &&
+                        <div class="alert shadow-lg h-10 text-center mt-5">
+                            <div className='flex justify-center mx-auto'>
+                                <small className='text-red-500 text-center uppercase'>{errorMessage}</small>
+                            </div>
+                        </div>
+                    }
+
+
 
                     <form onSubmit={handleSubmit(onSubmit)} className='mt-4 '>
 
@@ -82,14 +149,14 @@ const Login = () => {
                     <p className='text-center'><small>New to Doctors Portal? <Link className='text-secondary' to={'/signup'}>Create New Account</Link></small></p>
 
                     <div className="divider mt-2">OR</div>
-                    <button className="btn btn-outline btn-sm uppercase">Continue with google</button>
+                    <button onClick={() => signInWithGoogle()} className="btn btn-outline btn-sm uppercase">Continue with google</button>
 
                 </div>
             </div>
             {
                 resetModalStatus && <PasswordResetModal setResetModalStatus={setResetModalStatus}></PasswordResetModal>
             }
-            
+
         </div>
     );
 };
