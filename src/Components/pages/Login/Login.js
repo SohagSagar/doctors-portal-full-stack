@@ -36,8 +36,6 @@ const Login = () => {
     // signin with google //
     const [signInWithGoogle, googleUser, googleLoading, googleError] = useSignInWithGoogle(auth);
 
-    console.log(error);
-
     useEffect(() => {
         if (googleUser || user) {
             toast.success("Login Successful !", {
@@ -76,7 +74,7 @@ const Login = () => {
 
                     {
                         errorMessage &&
-                        <div class="alert shadow-lg h-10 text-center mt-5">
+                        <div className="alert shadow-lg h-10 text-center mt-5">
                             <div className='flex justify-center mx-auto'>
                                 <small className='text-red-500 text-center uppercase'>{errorMessage}</small>
                             </div>

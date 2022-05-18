@@ -64,7 +64,7 @@ const Signup = () => {
 
                     {
                         errorMessage &&
-                        <div class="alert shadow-lg h-10 text-center ">
+                        <div className="alert shadow-lg h-10 text-center ">
                             <div className='flex justify-center mx-auto'>
                                 <small className='text-red-500 text-center uppercase'>{errorMessage}</small>
                             </div>

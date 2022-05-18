@@ -1,15 +1,48 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useSendPasswordResetEmail } from 'react-firebase-hooks/auth';
 import { useForm } from 'react-hook-form';
 import { MdOutlineError } from 'react-icons/md';
-import Button from '../../shared_pages/Button';
-import LoginButton from '../../shared_pages/LoginButton';
+import { toast } from 'react-toastify';
+import auth from '../../firebase/firebase.init';
+import Loadding from '../../shared_pages/Loadding';
 
-const PasswordResetModal = ({setResetModalStatus}) => {
-    const { register, handleSubmit, watch, formState: { errors } } = useForm();
-    const onSubmit = data =>{
-        console.log(data);
-        setResetModalStatus(false)
-    } 
+
+const PasswordResetModal = ({ setResetModalStatus }) => {
+    const { register, handleSubmit, formState: { errors } } = useForm();
+    const [sendPasswordResetEmail, sending, error] = useSendPasswordResetEmail(auth);
+    const [errorMessage, setErrorMessage] = useState('')
+
+    const onSubmit = data => {
+        sendPasswordResetEmail(data?.email);
+        
+    }
+
+    useEffect(() => {
+        if (error) {
+            const message = error?.code.split('/')[1];
+            setErrorMessage(message);
+            return;
+        }
+        else if(!error && sending){
+            setErrorMessage('');
+            toast.success("Reset link sent to your email.", {
+                position: toast.POSITION.TOP_RIGHT
+            });
+            setResetModalStatus(false);
+        }
+
+    }, [error]);
+
+
+
+
+    console.log(sending);
+
+    
+    
+    
+
+
     return (
         <div>
 
@@ -21,6 +54,17 @@ const PasswordResetModal = ({setResetModalStatus}) => {
                         <h3 className="font-bold text-lg">Reset Password</h3><hr />
                     </div>
                     <hr className='w-40 mt-2 text-center mx-auto' />
+
+                    {/* errors alert message */}
+
+                    {
+                        errorMessage &&
+                        <div className="alert shadow-lg h-10 text-center mt-5 w-[250px] mx-auto">
+                            <div className='flex justify-center mx-auto'>
+                                <small className='text-red-500 text-center uppercase'>{errorMessage}</small>
+                            </div>
+                        </div>
+                    }
 
                     <div className='text-center mt-5'>
 
